@@ -5,14 +5,14 @@ from rest_framework import serializers
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Project
         fields = ['id', 'title', 'description', 'type', 'contributors']
 
-    def create(self, validated_data):
-        owner = get_user_model()
-
-        return Project.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     owner = get_user_model()
+    #     return Project.objects.create(**validated_data)
 
 
 class ProjectContributorSerializer(serializers.ModelSerializer):
