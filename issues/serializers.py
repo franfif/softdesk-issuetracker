@@ -11,20 +11,43 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    # contributors = ContributorSerializer(many=True)
+    # cont = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
-        fields = ['id', 'title', 'description', 'type', 'contributors']
+        # fields = ['id', 'title', 'description', 'type', 'owner', 'contributors']
+        fields = ['id', 'title', 'description', 'type', 'owner']
+
+    # def get_cont(self, instance):
+    #     queryset = instance,
 
     # def create(self, validated_data):
-    #     owner = get_user_model()
-    #     return Project.objects.create(**validated_data)
+    #     contributors = validated_data.pop('contributors')
+    #     project = Project.objects.create(**validated_data)
+    #     contributor_ids = []
+    #     for contributor in contributors:
+    #         contributor_ids.append(contributor.id)
+    #
+    #     project.contributors.set(contributor_ids)
+    #     return project
+    #
+    # def update(self, instance, validated_data):
+    #     contributors = validated_data.pop('contributors')
+    #     project = super().update(instance, **validated_data)
+    #     for contributor in contributors:
+    #         project.contributors.add(contributor.contributor,
+    #                                  through_default={'role': 'Contributor'})
+    #     return project
 
-
-class ProjectContributorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProjectContributor
-        fields = ['id', 'project', 'contributor', 'role']
+    # def create(self, validated_data):
+    #     # get request in the serializer from context
+    #     request = self.context.get('request')
+    #     owner = request.user
+    #     project = super().create(validated_data)
+    #     project.contributors.add(owner,
+    #                              through_defaults={'role': 'Owner'})
+    #     return project
 
 
 class IssueSerializer(serializers.ModelSerializer):
