@@ -7,7 +7,6 @@ from .serializers import ProjectSerializer, IssueSerializer, CommentSerializer
 from .mixins import ProductQuerySetMixin
 from .models import Project, Issue, Comment
 
-from issues.models import Project, ProjectContributor
 
 class ProjectListAPIView(
         ProductQuerySetMixin,
