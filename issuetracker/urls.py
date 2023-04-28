@@ -26,4 +26,7 @@ urlpatterns = [
     path('projects/<int:project_pk>/issues/<issue_pk>/comments/<int:comment_pk>/',
          views.CommentDetailAPIView.as_view(),
          name='comment-detail'),
+    path('contributors/',
+         views.ContributorListAPIView.as_view(),
+         name='contributor-list'),
 ]
