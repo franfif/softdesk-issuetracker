@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 
-from .models import Project, ProjectContributor, Issue, Comment
+from .models import Project, Contributor, Issue, Comment
 from rest_framework import serializers
 
 
