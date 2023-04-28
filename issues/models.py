@@ -18,19 +18,25 @@ class Project(models.Model):
                               related_name='Owner')
 
 
-class ProjectContributor(models.Model):
+class Contributor(models.Model):
     ROLE_CHOICES = [
         ('OWNER', 'Owner'),
         ('CONTRIBUTOR', 'Contributor'),
     ]
 
-    project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
-    contributor = models.ForeignKey(to=settings.AUTH_USER_MODEL,
-                                    on_delete=models.CASCADE)
+    project = models.ForeignKey(to=Project,
+                                on_delete=models.CASCADE,
+                                related_name='contributors')
+
+    user = models.ForeignKey(to=settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
     role = models.CharField(choices=ROLE_CHOICES, max_length=30)
 
     class Meta:
-        unique_together = ('project', 'contributor')
+        unique_together = ('project', 'user')
+
+    def __str__(self):
+        return f'{self.user}, {self.role}.'
 
 
 class Issue(models.Model):
