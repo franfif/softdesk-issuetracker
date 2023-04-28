@@ -4,6 +4,12 @@ from .models import Project, ProjectContributor, Issue, Comment
 from rest_framework import serializers
 
 
+class ContributorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contributor
+        fields = ['user', 'role']
+
+
 class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
