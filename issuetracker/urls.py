@@ -13,5 +13,17 @@ from issues import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
+    path('projects/', views.ProjectListAPIView.as_view(), name='project-list'),
+    path('projects/<int:pk>/', views.ProjectDetailAPIView.as_view(), name='project-detail'),
+    path('projects/<int:project_pk>/issues/', views.IssueListAPIView.as_view(), name='issue-list'),
+    path('projects/<int:project_pk>/issues/<issue_pk>/',
+         views.IssueDetailAPIView.as_view(),
+         name='issue-detail'),
+    path('projects/<int:project_pk>/issues/<issue_pk>/comments/',
+         views.CommentListAPIView.as_view(),
+         name='comment-list'),
+    path('projects/<int:project_pk>/issues/<issue_pk>/comments/<int:comment_pk>/',
+         views.CommentDetailAPIView.as_view(),
+         name='comment-detail'),
 ]
