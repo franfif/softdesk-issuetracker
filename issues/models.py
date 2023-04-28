@@ -13,9 +13,9 @@ class Project(models.Model):
     title = models.CharField(max_length=128)
     description = models.CharField(max_length=2048)
     type = models.CharField(choices=TYPE_CHOICES, max_length=2)
-    contributors = models.ManyToManyField(to=settings.AUTH_USER_MODEL,
-                                          through='ProjectContributor',
-                                          related_name='contributions')
+    owner = models.ForeignKey(to=settings.AUTH_USER_MODEL,
+                              on_delete=models.CASCADE,
+                              related_name='Owner')
 
 
 class ProjectContributor(models.Model):
