@@ -19,9 +19,12 @@ class Project(models.Model):
 
 
 class Contributor(models.Model):
+    OWNER = 'OWNER'
+    CONTRIBUTOR = 'CONTRIBUTOR'
+
     ROLE_CHOICES = [
-        ('OWNER', 'Owner'),
-        ('CONTRIBUTOR', 'Contributor'),
+        (OWNER, 'Owner'),
+        (CONTRIBUTOR, 'Contributor'),
     ]
 
     project = models.ForeignKey(to=Project,
