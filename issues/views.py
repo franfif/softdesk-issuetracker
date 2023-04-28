@@ -3,9 +3,9 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from .serializers import ProjectSerializer, IssueSerializer, CommentSerializer
+from .serializers import ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
 from .mixins import ProductQuerySetMixin
-from .models import Project, Issue, Comment
+from .models import Project, Issue, Comment, Contributor
 
 
 class ProjectListAPIView(
@@ -92,6 +92,11 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
             return generics.get_object_or_404(self.get_queryset(),
                                               pk=self.kwargs.get('comment_pk'))
 
+
+# Added this serializer to visualize the contributors and debug
+class ContributorListAPIView(generics.ListCreateAPIView):
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
 
 # class ProjectViewSet(ModelViewSet):
 #     serializer_class = ProjectSerializer
