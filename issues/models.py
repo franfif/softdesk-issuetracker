@@ -33,7 +33,9 @@ class Contributor(models.Model):
 
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
-    role = models.CharField(choices=ROLE_CHOICES, max_length=30)
+    role = models.CharField(choices=ROLE_CHOICES,
+                            max_length=30,
+                            default=CONTRIBUTOR)
 
     class Meta:
         unique_together = ('project', 'user')
