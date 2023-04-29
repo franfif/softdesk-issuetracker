@@ -5,7 +5,7 @@ from rest_framework import serializers
 class ContributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributor
-        fields = ['user']
+        fields = ['user', 'role']
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -23,25 +23,22 @@ class ProjectSerializer(serializers.ModelSerializer):
     #     return serializer.data
 
     def create(self, validated_data):
-        # get request in the serializer from context
-        print('Project create - validated_data')
-        print(validated_data)
         contributors_data = validated_data.pop('contributors')
         # project = super().create(validated_data)
         project = Project.objects.create(**validated_data)
 
+        # get request in the serializer from context
         request = self.context.get('request')
         owner = request.user
         project.contributors.add(Contributor.objects.create(user=owner,
                                                             role=Contributor.OWNER,
                                                             project=project))
-        # contributor_ids = []
         for contributor_data in contributors_data:
-            print('Project create - contributor_data')
-            print(contributor_data)
-            Contributor.objects.create(project=project, role=Contributor.CONTRIBUTOR, **contributor_data)
+            if contributor_data['user'] != owner:
+                Contributor.objects.create(project=project,
+                                           role=Contributor.CONTRIBUTOR,
+                                           **contributor_data)
 
-        # project.contributors.set(contributor_ids)
         return project
 
     def update(self, instance, validated_data):
