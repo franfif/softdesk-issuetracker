@@ -45,17 +45,24 @@ class ProjectSerializer(serializers.ModelSerializer):
         return project
 
     def update(self, instance, validated_data):
-        print('Project update - validated_data')
-        print(validated_data)
-        print('instance')
-        print(instance)
         contributors_data = validated_data.pop('contributors')
-        project = Project.objects.update(instance, **validated_data)
-        for contributor_data in contributors_data:
-            print(contributor_data)
+        project = super().update(instance, validated_data)
+
+        # Convert contributors_data to a list of users
+        new_contributors = list(map(lambda c: c['user'], contributors_data))
+        # Convert the existing contributors of this project to a list of users
+        existing_contributors = list(map(lambda c: c.user, Contributor.objects.filter(project=project)))
+
+        # Create new contributors if the user is not already a contributor
+        for user in (user for user in new_contributors if user not in existing_contributors):
             Contributor.objects.create(project=project,
                                        role=Contributor.CONTRIBUTOR,
-                                       **contributor_data)
+                                       user=user)
+        # Remove contributors who are not in the updated data
+        for user in (user for user in existing_contributors if user not in new_contributors):
+            # TO DO? Do we want to prevent the suppression of the contributor if they are the project's owner?
+            Contributor.objects.get(project=project, user=user).delete()
+
         return project
 
     # def create(self, validated_data):
