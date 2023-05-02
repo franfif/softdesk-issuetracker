@@ -77,6 +77,7 @@ class IssueSerializer(serializers.ModelSerializer):
         model = Issue
         fields = ['id', 'title', 'description', 'tag', 'priority',
                   'project', 'status', 'author', 'assignee', 'created_time']
+        read_only_fields = ['project', 'created_time', 'author']
 
 
 class CommentSerializer(serializers.ModelSerializer):

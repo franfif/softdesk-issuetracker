@@ -49,6 +49,12 @@ class IssueListAPIView(generics.ListCreateAPIView):
             return self.queryset.filter(project_id=self.kwargs.get('project_pk'))
         return self.queryset.all()
 
+    def perform_create(self, serializer):
+        issue = serializer.save(project=Project.objects.get(id=self.kwargs.get('project_pk')),
+                                author=self.request.user)
+        if not issue.assignee:
+            issue.assignee = self.request.user
+
 
 class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Issue.objects.all()

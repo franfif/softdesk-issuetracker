@@ -74,7 +74,6 @@ class Issue(models.Model):
                                related_name='author')
     assignee = models.ForeignKey(to=settings.AUTH_USER_MODEL,
                                  on_delete=models.SET_NULL,
-                                 default=settings.AUTH_USER_MODEL,
                                  null=True,
                                  related_name='assignee')
     created_time = models.DateTimeField(auto_now_add=True)
