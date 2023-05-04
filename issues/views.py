@@ -41,7 +41,7 @@ class IssueListAPIView(
     lookup_fields = ['project_id']
 
     def perform_create(self, serializer):
-        issue = serializer.save(project=Project.objects.get(id=self.kwargs.get('project_pk')),
+        issue = serializer.save(project=Project.objects.get(id=self.kwargs.get('project_id')),
                                 author=self.request.user)
         if not issue.assignee:
             issue.assignee = self.request.user
@@ -60,7 +60,16 @@ class CommentListAPIView(
         generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    lookup_fields = ['issue.project_id', 'issue_id']
+    lookup_fields = ['project_id', 'issue_id']
+
+    # Need to check if the user is authorized to access the project
+    # And that the comment belongs to the project.
+
+    def perform_create(self, serializer):
+        issue = Issue.objects.get(id=self.kwargs.get('issue_id'))
+        serializer.save(issue=issue,
+                        project=issue.project,
+                        author=self.request.user)
 
 
 class CommentDetailAPIView(

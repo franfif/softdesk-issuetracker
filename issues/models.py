@@ -84,5 +84,6 @@ class Comment(models.Model):
     author = models.ForeignKey(to=settings.AUTH_USER_MODEL,
                                on_delete=models.SET_NULL,
                                null=True)
+    project = models.ForeignKey(to=Project, on_delete=models.CASCADE)
     issue = models.ForeignKey(to=Issue, on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_now_add=True)
