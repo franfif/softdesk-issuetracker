@@ -11,12 +11,13 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
     # contributors = serializers.SerializerMethodField()
-    contributors = ContributorSerializer(many=True, read_only=True)
+    # contributors = ContributorSerializer(many=True, read_only=True)
 
     class Meta:
         model = Project
-        fields = ['id', 'title', 'description', 'type', 'owner', 'contributors']
-        # fields = ['id', 'title', 'description', 'type', 'owner']
+        # fields = ['id', 'title', 'description', 'type', 'owner', 'contributors']
+        fields = ['id', 'title', 'description', 'type', 'owner']
+        read_only_fields = ['owner']
 
     # def get_contributors(self, instance):
     #     queryset = instance.contributors.all()
