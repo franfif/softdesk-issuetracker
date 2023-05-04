@@ -25,21 +25,23 @@ class ProjectSerializer(serializers.ModelSerializer):
     #     return serializer.data
 
     def create(self, validated_data):
-        contributors_data = validated_data.pop('contributors')
-        # project = super().create(validated_data)
-        project = Project.objects.create(**validated_data)
+        # contributors_data = validated_data.pop('contributors')
 
         # get request in the serializer from context
         request = self.context.get('request')
         owner = request.user
+
+        # project = super().create(validated_data)
+        project = Project.objects.create(owner=owner, **validated_data)
+
         project.contributors.add(Contributor.objects.create(user=owner,
                                                             role=Contributor.OWNER,
                                                             project=project))
-        for contributor_data in contributors_data:
-            if contributor_data['user'] != owner:
-                Contributor.objects.create(project=project,
-                                           role=Contributor.CONTRIBUTOR,
-                                           **contributor_data)
+        # for contributor_data in contributors_data:
+        #     if contributor_data['user'] != owner:
+        #         Contributor.objects.create(project=project,
+        #                                    role=Contributor.CONTRIBUTOR,
+        #                                    **contributor_data)
 
         return project
 
