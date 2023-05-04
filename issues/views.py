@@ -78,6 +78,24 @@ class ContributorListAPIView(
     queryset = Contributor.objects.all()
 
     serializer_class = ContributorSerializer
+    lookup_fields = ['project_id']
+
+    def perform_create(self, serializer):
+        project = generics.get_object_or_404(Project,
+                                             id=self.kwargs.get('project_pk'))
+        # user = self.kwargs.get('user')
+        serializer.save(project=project,
+                        # user=user,
+                        role=Contributor.CONTRIBUTOR)
+
+
+class ContributorDestroyAPIView(
+        mixins.MultipleFieldDetailViewMixin,
+        generics.DestroyAPIView):
+    queryset = Contributor.objects.all()
+    serializer_class = ContributorSerializer
+    lookup_fields = ['project_id', 'id']
+
 
 # class ProjectViewSet(ModelViewSet):
 #     serializer_class = ProjectSerializer
