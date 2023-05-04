@@ -4,24 +4,17 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
 from .serializers import ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
-from .mixins import ProductQuerySetMixin
+from . import mixins
 from .models import Project, Issue, Comment, Contributor
 
 
 class ProjectListAPIView(
-        ProductQuerySetMixin,
+        mixins.ProductQuerySetMixin,
         generics.ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
 
     allow_staff_view = True
-
-    # def get_queryset(self, *args, **kwargs):
-    #     qs = super().get_queryset(*args, **kwargs)
-    #     user = self.request.user
-    #     if user.is_staff:
-    #         return qs
-    #     return qs.filter(contributors=user)
 
     # def perform_create(self, serializer):
     #     project = serializer.save()
@@ -30,7 +23,7 @@ class ProjectListAPIView(
 
 
 class ProjectDetailAPIView(
-        ProductQuerySetMixin,
+        mixins.ProductQuerySetMixin,
         generics.RetrieveUpdateDestroyAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -40,14 +33,12 @@ class ProjectDetailAPIView(
     #     project.contributors.add()
 
 
-class IssueListAPIView(generics.ListCreateAPIView):
+class IssueListAPIView(
+        mixins.MultipleFieldListViewMixin,
+        generics.ListCreateAPIView):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-
-    def get_queryset(self):
-        if self.kwargs.get('project_pk'):
-            return self.queryset.filter(project_id=self.kwargs.get('project_pk'))
-        return self.queryset.all()
+    lookup_fields = ['project_id']
 
     def perform_create(self, serializer):
         issue = serializer.save(project=Project.objects.get(id=self.kwargs.get('project_pk')),
@@ -56,52 +47,36 @@ class IssueListAPIView(generics.ListCreateAPIView):
             issue.assignee = self.request.user
 
 
-class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class IssueDetailAPIView(
+        mixins.MultipleFieldDetailViewMixin,
+        generics.RetrieveUpdateDestroyAPIView):
     queryset = Issue.objects.all()
     serializer_class = IssueSerializer
-
-    def get_object(self):
-        if self.kwargs.get('project_pk'):
-            return generics.get_object_or_404(self.get_queryset(),
-                                              project_id=self.kwargs.get('project_pk'),
-                                              pk=self.kwargs.get('issue_pk'))
-        else:
-            return generics.get_object_or_404(self.get_queryset(),
-                                              pk=self.kwargs.get('issue_pk'))
+    lookup_fields = ['project_id', 'id']
 
 
-class CommentListAPIView(generics.ListCreateAPIView):
+class CommentListAPIView(
+        mixins.MultipleFieldListViewMixin,
+        generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-
-    def get_object(self):
-        if self.kwargs.get('project_pk') and self.kwargs.get('issue_pk'):
-            print('there is an issue_pk')
-            return generics.get_object_or_404(self.get_queryset(),
-                                              project_id=self.kwargs.get('project_pk'),
-                                              issue_id=self.kwargs.get('issue_pk'))
-            # project_id=self.kwargs.get('project_pk'),
-        print('there is no issue pk')
-        return self.queryset.all()
+    lookup_fields = ['issue.project_id', 'issue_id']
 
 
-class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+class CommentDetailAPIView(
+        mixins.MultipleFieldDetailViewMixin,
+        generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-
-    def get_object(self):
-        if self.kwargs.get('project_pk') and self.kwargs.get('issue_pk'):
-            return generics.get_object_or_404(self.get_queryset(),
-                                              issue_id=self.kwargs.get('issue_pk'),
-                                              pk=self.kwargs.get('comment_pk'))
-        else:
-            return generics.get_object_or_404(self.get_queryset(),
-                                              pk=self.kwargs.get('comment_pk'))
+    lookup_fields = ['project_id', 'issue_id', 'id']
 
 
-# Added this serializer to visualize the contributors and debug
-class ContributorListAPIView(generics.ListCreateAPIView):
+class ContributorListAPIView(
+        mixins.MultipleFieldListViewMixin,
+        generics.ListCreateAPIView):
+    # queryset = Contributor.objects.filter(project=self.kwargs.get('project_pk'))
     queryset = Contributor.objects.all()
+
     serializer_class = ContributorSerializer
 
 # class ProjectViewSet(ModelViewSet):
