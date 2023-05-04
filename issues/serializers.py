@@ -5,7 +5,8 @@ from rest_framework import serializers
 class ContributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contributor
-        fields = ['user', 'role']
+        fields = ['id', 'user', 'role', 'project']
+        read_only_fields = ['role', 'project']
 
 
 class ProjectSerializer(serializers.ModelSerializer):
