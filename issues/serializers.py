@@ -10,10 +10,22 @@ class ContributorSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+    contributors = serializers.SerializerMethodField()
+
     class Meta:
         model = Project
-        fields = ['id', 'title', 'description', 'type', 'owner']
+        fields = ['id', 'title', 'description', 'type', 'owner', 'contributors']
         read_only_fields = ['owner']
+
+    def get_owner(self, obj):
+        return obj.owner.username
+
+    def get_contributors(self, obj):
+        names = []
+        for contributor in obj.contributors.all():
+            names.append(contributor.user.username)
+        return names
 
     def create(self, validated_data):
         # get request in the serializer from context
