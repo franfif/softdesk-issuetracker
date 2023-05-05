@@ -11,8 +11,9 @@ class ProjectListAPIView(
         generics.ListCreateAPIView):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+    permission_classes = [IsAuthenticated]
 
-    allow_staff_view = True
+    allow_staff_view = False
 
 
 class ProjectDetailAPIView(
