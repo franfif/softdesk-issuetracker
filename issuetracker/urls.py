@@ -29,7 +29,7 @@ urlpatterns = [
     path('projects/',
          views.ProjectListAPIView.as_view(),
          name='project-list'),
-    path('projects/<int:pk>/',
+    path('projects/<int:id>/',
          views.ProjectDetailAPIView.as_view(),
          name='project-detail'),
     path('projects/<int:project_id>/users/',
