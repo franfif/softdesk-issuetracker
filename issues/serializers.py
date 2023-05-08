@@ -31,7 +31,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     def get_issues(self, obj):
         issues = []
         for issue in obj.issue_set.all():
-            issues.append({'title': issue.description,
+            issues.append({'id': issue.id,
+                           'title': issue.title,
                            'tag': issue.tag,
                            'priority': issue.priority,
                            'status': issue.status})
