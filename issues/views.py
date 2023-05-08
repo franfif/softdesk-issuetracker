@@ -71,7 +71,6 @@ class CommentListAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         issue = Issue.objects.get(id=self.kwargs.get('issue_id'))
         serializer.save(issue=issue,
-                        project=issue.project,
                         author=self.request.user)
 
 
