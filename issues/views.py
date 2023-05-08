@@ -75,7 +75,6 @@ class CommentListAPIView(generics.ListCreateAPIView):
 
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
-    lookup_fields = ['project_id', 'issue_id', 'id']
 
     def get_object(self):
         obj = generics.get_object_or_404(Comment,
