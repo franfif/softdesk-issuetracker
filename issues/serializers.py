@@ -51,11 +51,21 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class IssueSerializer(serializers.ModelSerializer):
+    comments = serializers.SerializerMethodField()
+
     class Meta:
         model = Issue
         fields = ['id', 'title', 'description', 'tag', 'priority',
-                  'project', 'status', 'author', 'assignee', 'created_time']
+                  'project', 'status', 'author', 'assignee', 'created_time', 'comments']
         read_only_fields = ['project', 'created_time', 'author']
+
+    def get_comments(self, obj):
+        comments = []
+        for comment in obj.comment_set.all():
+            comments.append({'id': comment.id,
+                             'description': comment.description,
+                             'author': comment.author.username})
+        return comments
 
 
 class CommentSerializer(serializers.ModelSerializer):
