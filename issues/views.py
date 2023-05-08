@@ -42,7 +42,9 @@ class IssueListAPIView(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        issue = serializer.save(project=Project.objects.get(id=self.kwargs.get('project_id')),
+        project = generics.get_object_or_404(Project,
+                                             id=self.kwargs.get('project_id'))
+        issue = serializer.save(project=project,
                                 author=self.request.user)
         if not issue.assignee:
             issue.assignee = self.request.user
