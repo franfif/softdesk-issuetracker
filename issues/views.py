@@ -1,6 +1,6 @@
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics, permissions
 
+from .permissions import IsProjectOwnerOrReadOnly, IsProjectContributor, IsAuthorOrReadOnly
 from .serializers import ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
 from .models import Project, Issue, Comment, Contributor
 
@@ -8,38 +8,38 @@ from .models import Project, Issue, Comment, Contributor
 class ProjectListAPIView(
         generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated]
-
-    allow_staff_view = False
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self, *args, **kwargs):
-        if self.allow_staff_view:
-            print(self.allow_staff_view)
-            return Project.objects.all()
         queryset = Project.objects.filter(contributors__user=self.request.user)
         return queryset
+
+    # perform_create() from the view or create() from the serializer?
 
 
 class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticated,
+                          IsProjectOwnerOrReadOnly]
+
+    def get_queryset(self):
+        queryset = Project.objects.filter(contributors__user=self.request.user)
+        return queryset
 
     def get_object(self):
-        print(self.request.user)
-        print(self.kwargs.get('id'))
-        print(Project.objects.filter(contributors__user=self.request.user,
-                                     id=self.kwargs.get('id')))
-        obj = generics.get_object_or_404(Project,
-                                         contributors__user=self.request.user,
+        obj = generics.get_object_or_404(self.get_queryset(),
                                          id=self.kwargs.get('id'))
+        self.check_object_permissions(self.request, obj)
         return obj
 
 
 class IssueListAPIView(generics.ListCreateAPIView):
     serializer_class = IssueSerializer
+    permission_classes = [permissions.IsAuthenticated,
+                          IsProjectContributor]
 
     def get_queryset(self):
-        queryset = Issue.objects.filter(project=self.kwargs.get('project_id'))
-        return queryset
+        return Issue.objects.filter(project=self.kwargs.get('project_id'))
 
     def perform_create(self, serializer):
         project = generics.get_object_or_404(Project,
@@ -52,16 +52,24 @@ class IssueListAPIView(generics.ListCreateAPIView):
 
 class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = IssueSerializer
+    # Any contributor can CRUD a project issue
+    permission_classes = [permissions.IsAuthenticated,
+                          IsProjectContributor]
+
+    def get_queryset(self):
+        queryset = Issue.objects.filter(project=self.kwargs.get('project_id'))
+        return queryset
 
     def get_object(self):
-        obj = generics.get_object_or_404(Issue,
-                                         project=self.kwargs.get('project_id'),
+        obj = generics.get_object_or_404(self.get_queryset(),
                                          id=self.kwargs.get('id'))
         return obj
 
 
 class CommentListAPIView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated,
+                          IsProjectContributor]
 
     def get_queryset(self):
         queryset = Comment.objects.filter(issue__project=self.kwargs.get('project_id'),
@@ -69,25 +77,33 @@ class CommentListAPIView(generics.ListCreateAPIView):
         return queryset
 
     def perform_create(self, serializer):
-        issue = Issue.objects.get(id=self.kwargs.get('issue_id'))
+        issue = generics.get_object_or_404(Issue,
+                                           id=self.kwargs.get('issue_id'))
         serializer.save(issue=issue,
                         author=self.request.user)
 
 
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated,
+                          IsProjectContributor,
+                          IsAuthorOrReadOnly]
+
+    def get_queryset(self):
+        queryset = Comment.objects.filter(issue__project=self.kwargs.get('project_id'),
+                                          issue=self.kwargs.get('issue_id'))
+        return queryset
 
     def get_object(self):
-        obj = generics.get_object_or_404(Comment,
-                                         issue__project=self.kwargs.get('project_id'),
-                                         issue=self.kwargs.get('issue_id'),
+        obj = generics.get_object_or_404(self.get_queryset(),
                                          id=self.kwargs.get('id'))
         return obj
 
 
 class ContributorListAPIView(generics.ListCreateAPIView):
-    queryset = Contributor.objects.all()
     serializer_class = ContributorSerializer
+    permission_classes = [permissions.IsAuthenticated,
+                          IsProjectContributor]
 
     def get_queryset(self, *args, **kwargs):
         queryset = Contributor.objects.filter(project=self.kwargs.get('project_id'))
@@ -102,10 +118,14 @@ class ContributorListAPIView(generics.ListCreateAPIView):
 
 class ContributorDestroyAPIView(generics.DestroyAPIView):
     serializer_class = ContributorSerializer
+    permission_classes = [permissions.IsAuthenticated,
+                          IsProjectContributor]
+
+    def get_queryset(self):
+        queryset = Contributor.objects.filter(project=self.kwargs.get('project_id'))
+        return queryset
 
     def get_object(self):
-        obj = generics.get_object_or_404(Contributor,
-                                         project=self.kwargs.get('project_id'),
+        obj = generics.get_object_or_404(self.get_queryset(),
                                          id=self.kwargs.get('id'))
         return obj
-
