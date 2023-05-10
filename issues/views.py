@@ -19,6 +19,7 @@ class ProjectListAPIView(
 
 class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProjectSerializer
+    # Only the owner should be able to update & delete a project
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectOwnerOrReadOnly]
 
@@ -35,6 +36,7 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class IssueListAPIView(generics.ListCreateAPIView):
     serializer_class = IssueSerializer
+    # Only contributors should be able to create & read issues on an project
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor]
 
@@ -52,9 +54,10 @@ class IssueListAPIView(generics.ListCreateAPIView):
 
 class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = IssueSerializer
-    # Any contributor can CRUD a project issue
+    # Only the author should be able to update & delete an issue
     permission_classes = [permissions.IsAuthenticated,
-                          IsProjectContributor]
+                          IsProjectContributor,
+                          IsAuthorOrReadOnly]
 
     def get_queryset(self):
         queryset = Issue.objects.filter(project=self.kwargs.get('project_id'))
@@ -68,6 +71,7 @@ class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class CommentListAPIView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
+    # Only contributors should be able to create & read comments on an issue
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor]
 
@@ -85,6 +89,7 @@ class CommentListAPIView(generics.ListCreateAPIView):
 
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
+    # Only the author should be able to update & delete a comment
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor,
                           IsAuthorOrReadOnly]
