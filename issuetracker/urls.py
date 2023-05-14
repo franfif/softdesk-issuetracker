@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+import authentication.views
 from issues import views
 
 
@@ -13,12 +14,16 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
 
+    path('signup/',
+         authentication.views.UserCreate.as_view(),
+         name="signup"),
     path('token/',
          TokenObtainPairView.as_view(),
          name='token_obtain_pair'),
     path('token/refresh/',
          TokenRefreshView.as_view(),
          name='token_refresh'),
+
     path('projects/',
          views.ProjectListAPIView.as_view(),
          name='project-list'),
