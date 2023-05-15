@@ -5,7 +5,7 @@ from django.db import models
 class Project(models.Model):
     TYPE_CHOICES = [
         ('BE', 'Back-End'),
-        ('FE', 'Font-End'),
+        ('FE', 'Front-End'),
         ('IO', 'iOS'),
         ('AN', 'Android'),
     ]
