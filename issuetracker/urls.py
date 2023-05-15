@@ -17,12 +17,13 @@ urlpatterns = [
     path('signup/',
          authentication.views.UserCreate.as_view(),
          name="signup"),
-    path('token/',
+    path('login/',
          TokenObtainPairView.as_view(),
          name='token_obtain_pair'),
-    path('token/refresh/',
-         TokenRefreshView.as_view(),
-         name='token_refresh'),
+    # refresh token: if needed, uncomment these lines.
+    # path('login/refresh/',
+    #      TokenRefreshView.as_view(),
+    #      name='token_refresh'),
 
     path('projects/',
          views.ProjectListAPIView.as_view(),
