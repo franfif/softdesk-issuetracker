@@ -30,7 +30,6 @@ class Contributor(models.Model):
     project = models.ForeignKey(to=Project,
                                 on_delete=models.CASCADE,
                                 related_name='contributors')
-
     user = models.ForeignKey(to=settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     role = models.CharField(choices=ROLE_CHOICES,
