@@ -55,10 +55,17 @@ class IssueListAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         project = generics.get_object_or_404(Project,
                                              id=self.kwargs.get('project_id'))
-        issue = serializer.save(project=project,
-                                author=self.request.user)
-        if not issue.assignee:
-            issue.assignee = self.request.user
+
+        if 'assignee' in serializer.validated_data:
+            # check if assignee (user id) is contributor in project
+            # if not, raise validation error
+            assignee = serializer.validated_data.pop('assignee')
+        else:
+            assignee = self.request.user
+
+        serializer.save(project=project,
+                        author=self.request.user,
+                        assignee=assignee)
 
 
 class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
