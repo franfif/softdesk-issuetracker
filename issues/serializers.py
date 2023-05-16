@@ -38,17 +38,17 @@ class ProjectSerializer(serializers.ModelSerializer):
                            'status': issue.status})
         return issues
 
-    def create(self, validated_data):
-        # get request in the serializer from context
-        request = self.context.get('request')
-        owner = request.user
-
-        project = Project.objects.create(owner=owner, **validated_data)
-
-        project.contributors.add(Contributor.objects.create(user=owner,
-                                                            role=Contributor.OWNER,
-                                                            project=project))
-        return project
+    # def create(self, validated_data):
+    #     # get request in the serializer from context
+    #     request = self.context.get('request')
+    #     owner = request.user
+    #
+    #     project = Project.objects.create(owner=owner, **validated_data)
+    #
+    #     project.contributors.add(Contributor.objects.create(user=owner,
+    #                                                         role=Contributor.OWNER,
+    #                                                         project=project))
+    #     return project
 
 
 class IssueSerializer(serializers.ModelSerializer):

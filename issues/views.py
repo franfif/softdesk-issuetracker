@@ -17,6 +17,13 @@ class ProjectListAPIView(
         return queryset
 
     # perform_create() from the view or create() from the serializer?
+    def perform_create(self, serializer):
+        owner = self.request.user
+        project = serializer.save(owner=owner)
+
+        project.contributors.add(Contributor.objects.create(user=owner,
+                                                            role=Contributor.OWNER,
+                                                            project=project))
 
 
 class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
