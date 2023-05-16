@@ -123,8 +123,9 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class ContributorListAPIView(generics.ListCreateAPIView):
     serializer_class = ContributorSerializer
+    # Only the project owner should be able to add contributors
     permission_classes = [permissions.IsAuthenticated,
-                          IsProjectContributor]
+                          IsProjectOwnerOrReadOnly]
 
     def get_queryset(self, *args, **kwargs):
         queryset = Contributor.objects.filter(project=self.kwargs.get('project_id'))
@@ -139,8 +140,9 @@ class ContributorListAPIView(generics.ListCreateAPIView):
 
 class ContributorDestroyAPIView(generics.DestroyAPIView):
     serializer_class = ContributorSerializer
+    # Only the project owner should be able to update and delete contributors
     permission_classes = [permissions.IsAuthenticated,
-                          IsProjectContributor]
+                          IsProjectOwnerOrReadOnly]
 
     def get_queryset(self):
         queryset = Contributor.objects.filter(project=self.kwargs.get('project_id'))
