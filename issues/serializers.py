@@ -1,12 +1,20 @@
-from .models import Project, Contributor, Issue, Comment
 from rest_framework import serializers
+
+from .models import Project, Contributor, Issue, Comment
 
 
 class ContributorSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
     class Meta:
         model = Contributor
         fields = ['id', 'user', 'role', 'project']
-        read_only_fields = ['role', 'project']
+        read_only_fields = ['user', 'role', 'project']
+
+    def get_user(self, obj):
+        user = {'id': obj.user.id,
+                'name': obj.user.username}
+        return user
 
 
 class ProjectSerializer(serializers.ModelSerializer):
