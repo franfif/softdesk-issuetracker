@@ -33,6 +33,7 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
                           IsProjectOwnerOrReadOnly]
 
     def get_queryset(self):
+        # Only contributors should be able to see a project
         queryset = Project.objects.filter(contributors__user=self.request.user)
         return queryset
 
@@ -45,7 +46,7 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 class IssueListAPIView(generics.ListCreateAPIView):
     serializer_class = IssueSerializer
-    # Only contributors should be able to create & read issues on an project
+    # Only contributors should be able to create & read issues on a project
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor]
 
