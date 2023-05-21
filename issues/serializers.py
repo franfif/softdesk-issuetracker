@@ -64,6 +64,12 @@ class IssueSerializer(serializers.ModelSerializer):
                              'author': comment.author.username})
         return comments
 
+    def validate(self, data):
+        # Get access to the issue's project's contributors
+        # Then check the assignee is part of the project's contributors
+        # Or raise validation error.
+        return data
+
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
