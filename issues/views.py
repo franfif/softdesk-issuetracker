@@ -161,5 +161,5 @@ class ContributorDestroyAPIView(generics.DestroyAPIView):
 
     def get_object(self):
         obj = generics.get_object_or_404(self.get_queryset(),
-                                         id=self.kwargs.get('id'))
+                                         user=self.kwargs.get('user_id'))
         return obj

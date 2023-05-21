@@ -34,7 +34,7 @@ urlpatterns = [
     path('projects/<int:project_id>/users/',
          views.ContributorListAPIView.as_view(),
          name='contributor-list'),
-    path('projects/<int:project_id>/users/<int:id>/',
+    path('projects/<int:project_id>/users/<int:user_id>/',
          views.ContributorDestroyAPIView.as_view(),
          name='contributor-detail'),
     path('projects/<int:project_id>/issues/',
