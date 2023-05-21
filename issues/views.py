@@ -85,6 +85,16 @@ class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
                                          id=self.kwargs.get('id'))
         return obj
 
+    def perform_update(self, serializer):
+        if 'assignee' in serializer.validated_data:
+            # check if assignee (user id) is contributor in project
+            # if not, raise validation error
+            assignee = serializer.validated_data.pop('assignee')
+        else:
+            assignee = self.request.user
+
+        serializer.save(assignee=assignee)
+
 
 class CommentListAPIView(generics.ListCreateAPIView):
     serializer_class = CommentSerializer
