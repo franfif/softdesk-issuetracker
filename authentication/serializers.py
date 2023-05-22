@@ -13,12 +13,5 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = User(**validated_data)
-        try:
-            validate_password(password=password, user=user)
-        except ValidationError as err:
-            raise serializers.ValidationError({'password': err.messages})
-        user.set_password(password)
-        user.save()
+        user = User.objects.create_user(**validated_data)
         return user
