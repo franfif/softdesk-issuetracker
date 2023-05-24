@@ -1,4 +1,6 @@
-from rest_framework import generics, permissions
+from django.contrib.auth import get_user_model
+
+from rest_framework import generics, permissions, serializers
 
 from .permissions import IsProjectOwnerOrReadOnly, IsProjectContributor, IsAuthorOrReadOnly
 from .serializers import ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
@@ -154,7 +156,10 @@ class ContributorListAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         project = generics.get_object_or_404(Project,
                                              id=self.kwargs.get('project_id'))
+        user = generics.get_object_or_404(get_user_model(),
+                                          id=self.request.data.get('user'))
         serializer.save(project=project,
+                        user=user,
                         role=Contributor.CONTRIBUTOR)
 
 
