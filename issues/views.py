@@ -9,9 +9,13 @@ from .models import Project, Issue, Comment, Contributor
 
 class ProjectListAPIView(
         generics.ListCreateAPIView):
-    serializer_class = ProjectSerializer
     # Any authenticated user should be able to create a project
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return serializers.ProjectCreateSerializer
+        return serializers.ProjectListSerializer
 
     def get_queryset(self, *args, **kwargs):
         # A user can only see the projects for which they are a contributor

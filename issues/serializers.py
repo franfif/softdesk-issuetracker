@@ -17,7 +17,26 @@ class ContributorSerializer(serializers.ModelSerializer):
         return user
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class ProjectListSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Project
+        fields = ['id', 'title', 'type', 'owner']
+        read_only_fields = ['owner']
+
+    def get_owner(self, obj):
+        return obj.owner.username
+
+
+class ProjectCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ['id', 'title', 'description', 'type', 'owner']
+        read_only_fields = ['owner']
+
+
+class ProjectDetailSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
     contributors = serializers.SerializerMethodField()
     issues = serializers.SerializerMethodField()
@@ -28,7 +47,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         read_only_fields = ['owner']
 
     def get_owner(self, obj):
-        return obj.owner.username
+        return {'id': obj.owner.id,
+                'username': obj.owner.username}
 
     def get_contributors(self, obj):
         contributors = []
@@ -42,10 +62,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         issues = []
         for issue in obj.issue_set.all():
             issues.append({'id': issue.id,
-                           'title': issue.title,
-                           'tag': issue.tag,
-                           'priority': issue.priority,
-                           'status': issue.status})
+                           'title': issue.title})
         return issues
 
 
