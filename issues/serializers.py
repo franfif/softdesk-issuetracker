@@ -31,10 +31,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         return obj.owner.username
 
     def get_contributors(self, obj):
-        names = []
+        contributors = []
         for contributor in obj.contributors.all():
-            names.append(contributor.user.username)
-        return names
+            contributors.append({'id': contributor.user.id,
+                                 'username': contributor.user.username,
+                                 'role': contributor.role})
+        return contributors
 
     def get_issues(self, obj):
         issues = []
