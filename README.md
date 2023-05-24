@@ -1,4 +1,3 @@
-# Issue Tracker App - SoftDesk
 <h1 align="center">
 issuetracker API - SoftDesk<br>
 <img alt="SoftDesk logo" src="./static/media/SoftDesk_Logo.png" width="224px"/><br/>
