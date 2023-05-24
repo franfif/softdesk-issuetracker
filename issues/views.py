@@ -58,9 +58,14 @@ class IssueListAPIView(generics.ListCreateAPIView):
                                              id=self.kwargs.get('project_id'))
 
         if 'assignee' in serializer.validated_data:
-            # check if assignee (user id) is contributor in project
-            # if not, raise validation error
             assignee = serializer.validated_data.pop('assignee')
+            print(assignee)
+            # if assignee is not a contributor in project
+            # raise ValidationError
+            if not Project.objects.filter(id=self.kwargs.get('project_id'),
+                                          contributors__user=assignee).exists():
+                raise serializers.ValidationError(
+                    {'assignee': "The issue's assignee must be a contributor of this project."})
         else:
             assignee = self.request.user
 
@@ -87,9 +92,13 @@ class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         if 'assignee' in serializer.validated_data:
-            # check if assignee (user id) is contributor in project
-            # if not, raise validation error
             assignee = serializer.validated_data.pop('assignee')
+            # if assignee is not a contributor in project
+            # raise ValidationError
+            if not Project.objects.filter(id=self.kwargs.get('project_id'),
+                                          contributors__user=assignee).exists():
+                raise serializers.ValidationError(
+                    {'assignee': "The issue's assignee must be a contributor of this project."})
         else:
             assignee = self.request.user
 
