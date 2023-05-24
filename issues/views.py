@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions, serializers
 
 from .permissions import IsProjectOwnerOrReadOnly, IsProjectContributor, IsAuthorOrReadOnly
-from .serializers import ProjectSerializer, IssueSerializer, CommentSerializer, ContributorSerializer
+from . import serializers
 from .models import Project, Issue, Comment, Contributor
 
 
@@ -29,7 +29,7 @@ class ProjectListAPIView(
 
 
 class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ProjectSerializer
+    serializer_class = serializers.ProjectDetailSerializer
     # Only the owner should be able to update & delete a project
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectOwnerOrReadOnly]
@@ -47,7 +47,7 @@ class ProjectDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class IssueListAPIView(generics.ListCreateAPIView):
-    serializer_class = IssueSerializer
+    serializer_class = serializers.IssueSerializer
     # Only contributors should be able to create & read issues on a project
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor]
@@ -77,7 +77,7 @@ class IssueListAPIView(generics.ListCreateAPIView):
 
 
 class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = IssueSerializer
+    serializer_class = serializers.IssueSerializer
     # Only the author should be able to update & delete an issue
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor,
@@ -108,7 +108,7 @@ class IssueDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CommentListAPIView(generics.ListCreateAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = serializers.CommentSerializer
     # Only contributors should be able to create & read comments on an issue
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor]
@@ -126,7 +126,7 @@ class CommentListAPIView(generics.ListCreateAPIView):
 
 
 class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = CommentSerializer
+    serializer_class = serializers.CommentSerializer
     # Only the author should be able to update & delete a comment
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectContributor,
@@ -144,7 +144,7 @@ class CommentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ContributorListAPIView(generics.ListCreateAPIView):
-    serializer_class = ContributorSerializer
+    serializer_class = serializers.ContributorSerializer
     # Only the project owner should be able to add contributors
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectOwnerOrReadOnly]
@@ -164,7 +164,7 @@ class ContributorListAPIView(generics.ListCreateAPIView):
 
 
 class ContributorDestroyAPIView(generics.DestroyAPIView):
-    serializer_class = ContributorSerializer
+    serializer_class = serializers.ContributorSerializer
     # Only the project owner should be able to update and delete contributors
     permission_classes = [permissions.IsAuthenticated,
                           IsProjectOwnerOrReadOnly]
