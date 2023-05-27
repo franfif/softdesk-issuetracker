@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         try:
             validate_password(password, user=user)
         except ValidationError as e:
+            user.delete()
             raise serializers.ValidationError({'password': e.messages})
 
         user.set_password(password)
