@@ -3,15 +3,29 @@ issuetracker API - SoftDesk<br>
 <img alt="SoftDesk logo" src="./static/media/SoftDesk_Logo.png" width="224px"/><br/>
 </h1>
 
+
+
 [Access the full online document on Postman](https://documenter.getpostman.com/view/20632376/2s93m4YNhd)
 
-issuetracker is an API provided by SoftDesk that facilitates project management and issue tracking.
+issuetracker is a RESTful API provided by SoftDesk (a fictional - for educational purposes) that facilitates project management and issue tracking.
 
 It allows users, including project managers and contributors, to create projects and manage associated issues. Issues can be assigned to project contributors, and any contributor can comment on them. Additionally, all project contributors can track the status of each issue within the project.
+Data security is ensured through strict and meticulous **Identity Access Management**.
 
 This API is compatible with Android, iOS, and web applications.
 
 By utilizing the API endpoints, users of these applications can design various projects, add users to specific projects, create issues within projects, and categorize them based on priorities, tags, assignees, and status.
+
+## Main skills involved in this project
+- Create a **RESTful API** using **Django Rest Framework**
+- Writing **documentation** for an application with **Postman**
+- **Securing an API** to comply with **OWASP** and **GDPR** standards
+- Attention to detail
+- Git and Github
+- Django and Django Rest Framework
+- Identity Access Management (IAM)
+- Authentication and JWT Token
+
 
 [The documentation](https://documenter.getpostman.com/view/20632376/2s93m4YNhd) regroups the endpoints into 5 chapters:
 
